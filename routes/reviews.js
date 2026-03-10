@@ -1,22 +1,12 @@
 const express = require('express')
 const router = express.Router({ mergeParams: true });//mergeParams used to connect the :id in this file
 const catchAsync = require('../utils/catchAsync')
-const { reviewSchema } = require('../schemas')
-const { isLoggedIn } = require('../middleware')
+
+const { isLoggedIn, validateReview } = require('../middleware')
 const Campground = require('../models/campground')
 const Review = require('../models/review')
 
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map((el) => el.message).join(',')
-        console.log(msg)
-        throw new ExpressError(msg, 400)
-    }
-    else {
-        next();
-    }
-}
+
 
 router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res, next) => {
     const { id } = req.params;
